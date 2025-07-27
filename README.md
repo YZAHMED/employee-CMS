@@ -1,133 +1,127 @@
-# Employee Management System - PHP CMS Assignment
+# Employee Management System – PHP CMS Project
 
-This is my PHP CMS assignment for the Employee Management System. I created this project as part of my coursework to learn PHP and MySQL.
-
-## Project Overview
-
-This is a basic Content Management System (CMS) built with vanilla PHP and MySQL. The system allows administrators to manage employees, departments, and projects. It includes a public-facing website that displays employee information and company statistics.
-
-## Features
-
-### Admin Panel
-- **Dashboard**: Overview of company statistics and recent employees
-- **Employee Management**: Add, edit, delete, and view employee information
-- **Department Management**: Create and manage company departments
-- **Project Management**: Manage company projects (from original CMS)
-- **User Management**: Admin user accounts
-
-### Public Website
-- **Company Statistics**: Display total employees, departments, etc.
-- **Employee Directory**: Show all active employees with their details
-- **Department Overview**: List all departments with employee counts
-
-## Database Structure
-
-The system uses the following main tables:
-- `employees`: Stores employee information (name, email, department, salary, etc.)
-- `departments`: Stores department information
-- `users`: Admin user accounts
-- `projects`: Company projects (from original CMS)
-
-## Setup Instructions
-
-### Prerequisites
-- XAMPP or similar local server with PHP and MySQL
-- Web browser
-
-### Installation Steps
-
-1. **Set up the database:**
-   - Open phpMyAdmin
-   - Create a new database called `employee_cms`
-   - Import the `admin/employee_cms.sql` file
-
-2. **Configure database connection:**
-   - Edit `admin/includes/database.php`
-   - Update the database credentials if needed (default uses localhost/root)
-
-3. **Set up admin user:**
-   - The default admin user is: `admin@company.com`
-   - Password: You'll need to update the MD5 hash in the SQL file
-   - To generate MD5 hash for "admin123": use an online MD5 generator
-
-4. **Access the system:**
-   - Public website: `http://localhost/employee-cms/`
-   - Admin panel: `http://localhost/employee-cms/admin/`
-
-## File Structure
-
-```
-employee-cms/
-├── admin/
-│   ├── includes/
-│   │   ├── database.php      # Database connection
-│   │   ├── config.php        # Basic configuration
-│   │   ├── functions.php     # Helper functions
-│   │   ├── header.php        # Admin header
-│   │   └── footer.php        # Admin footer
-│   ├── dashboard.php         # Admin dashboard
-│   ├── employees.php         # Employee listing
-│   ├── employees_add.php     # Add new employee
-│   ├── employees_edit.php    # Edit employee
-│   ├── departments.php       # Department management
-│   ├── projects.php          # Project management
-│   ├── users.php             # User management
-│   ├── index.php             # Admin login
-│   ├── logout.php            # Logout
-│   ├── styles.css            # Admin styling
-│   └── employee_cms.sql      # Database structure
-├── index.php                 # Public website
-└── README.md                 # This file
-```
-
-## Student Notes
-
-This project was created as part of my PHP CMS assignment. I learned a lot about:
-- PHP basics and syntax
-- MySQL database operations
-- Form handling and validation
-- Session management
-- Basic security concepts
-- HTML/CSS for styling
-
-### What I learned:
-- How to connect PHP to MySQL databases
-- Basic CRUD operations (Create, Read, Update, Delete)
-- Form validation and error handling
-- Session-based authentication
-- Basic SQL queries and joins
-- Responsive web design with CSS Grid
-
-### Challenges I faced:
-- Understanding PHP syntax and logic
-- Database relationship concepts
-- Form validation and security
-- CSS styling and layout
-- Debugging PHP errors
-
-## Security Notes
-
-This is a student project with basic security. In a real-world application, you would need:
-- Password hashing (not MD5)
-- SQL injection prevention (prepared statements)
-- Input validation and sanitization
-- CSRF protection
-- HTTPS encryption
-
-## Technologies Used
-
-- **Backend**: PHP 7.4+
-- **Database**: MySQL
-- **Frontend**: HTML5, CSS3
-- **Editor**: CKEditor (for rich text editing)
-- **Icons**: Font Awesome (optional)
-
-## License
-
-This is a student project created for educational purposes.
+This is a simple Employee Management System I built using PHP and MySQL as part of my coursework. It helped me understand how CMS systems work behind the scenes and gave me hands-on experience with working on a full-stack web app.
 
 ---
 
-**Student Name**: [Your Name]  
-**Course**: [Course Name]  
-**Date**: [Submission Date] 
+## 🗂 Project Summary
+
+The system lets an admin manage employees, departments, and projects. There’s also a front-facing page where you can view employees and some company stats like how many people work in each department.
+
+I tried to keep it basic and use only **core PHP** and **MySQL** (no frameworks) to get better at writing raw backend logic and database queries.
+
+---
+
+## 💡 Features
+
+### Admin Panel
+- Dashboard with quick stats (total employees, departments, projects, etc.)
+- Add / Edit / Delete employees
+- Manage departments
+- Basic user management for admins
+- Upload profile photo (stored as Base64 in DB for simplicity)
+
+### Public Site
+- View all active employees in a card-style layout
+- Shows overall company stats and department breakdown
+
+---
+
+## 🧩 Database Tables
+
+The app uses four main tables:
+- `employees` – name, email, department, salary, status, etc.
+- `departments` – just id, name, and description
+- `projects` – basic info about company projects
+- `users` – login credentials for admin
+
+---
+
+## ⚙️ Setup Guide
+
+### You’ll need:
+- XAMPP / WAMP or any local server with PHP and MySQL
+- Web browser (tested on Chrome)
+
+### Steps:
+1. Open phpMyAdmin and create a new database called `employee_cms`
+2. Import the SQL file: `admin/employee_cms.sql`
+3. Go to `admin/includes/database.php` and check if the DB credentials match your local setup
+4. Done!  
+   - Open `http://localhost/employee-cms/` for the main site  
+   - Admin panel: `http://localhost/employee-cms/admin/`
+
+#### 🔐 Default Admin Credentials
+- **Username**: `admin@company.com`  
+- **Password**: `admin`  
+*(Login page: `http://localhost/employee-cms/admin/`)*
+
+---
+
+## 🧱 File Structure
+
+employee-cms/
+├── admin/
+│ ├── includes/ # DB config, functions, headers
+│ ├── employees_*.php # Add, edit, view employees
+│ ├── departments.php
+│ ├── dashboard.php
+│ ├── users.php
+│ ├── logout.php
+│ └── employee_cms.sql
+├── index.php # Public homepage
+└── README.md
+
+yaml
+Copy
+Edit
+
+---
+
+## ✍️ What I Learned
+
+- Connecting PHP with MySQL using `mysqli`
+- Writing SQL queries manually (SELECT, INSERT, JOINs, etc.)
+- Form submission with validation and error handling
+- Storing image files as Base64 (I know it's not ideal but it worked!)
+- Using sessions for admin login/logout
+- Organizing PHP projects and separating concerns
+
+---
+
+## 🔧 Challenges Faced
+
+- Validating file uploads securely
+- Figuring out how to use SQL joins for departments
+- Making sure errors don’t break the layout
+- Building the dashboard counters dynamically
+- CSS styling took a while (used CSS Grid + some inline styles)
+
+---
+
+## 🚨 Important Security Notes
+
+This project is meant for learning only. Real-world apps should have:
+- Strong password hashing (bcrypt instead of MD5)
+- Prepared statements to stop SQL injection
+- Input sanitization (esp. for file uploads)
+- CSRF tokens on forms
+- HTTPS and better session handling
+
+---
+
+## 🛠 Tools Used
+
+- PHP 7.4+
+- MySQL
+- HTML5 + CSS3
+- CKEditor for project description editing
+- Font Awesome icons
+
+---
+
+## 📘 Notes
+
+> This was built by me for learning PHP backend development. If you’re reviewing this project, feel free to suggest improvements.
+
+---
