@@ -195,6 +195,7 @@ include( 'admin/includes/functions.php' );
 
   <div class="admin-link">
     <p><a href="admin/">Admin Login</a> - For authorized personnel only</p>
+    
   </div>
 
 </body>
