@@ -1,6 +1,6 @@
 <?php
 
-$connect = mysqli_connect("localhost","root","","employee_cms");
+$connect = mysqli_connect("localhost","root","root","employee_cms");
 
 if(!$connect){
     die("Connection failed");

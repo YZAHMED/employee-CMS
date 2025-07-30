@@ -83,6 +83,49 @@ include( 'admin/includes/functions.php' );
       text-decoration: none;
       font-weight: bold;
     }
+
+    #clock-in-section {
+  background: white;
+  padding: 20px;
+  border: 1px solid #ccc;
+  margin-bottom: 30px;
+  border-radius: 4px;
+  margin-top: 30px;
+}
+
+#clock-in-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-width: 400px;
+}
+
+#clock-in-form label {
+  font-weight: bold;
+  color: #333;
+}
+
+#clock-in-form select {
+  padding: 10px;
+  font-size: 1em;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+#clock-in-form button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px;
+  font-size: 1em;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#clock-in-form button:hover {
+  background-color: #0056b3;
+}
+
   </style>
   
 </head>
@@ -193,7 +236,185 @@ include( 'admin/includes/functions.php' );
     <?php endwhile; ?>
   </div>
 
-  <div class="admin-link">
+  
+    <!-- 
+  created employee drop down
+  next submit to function that updates employee clocked in boolean to true
+  then create section that shows clocked in employees (select all where clocked in is true)
+  create clock out form/button and function update clocked in to false
+
+  update database to include employee time logs table
+  update clock in the log clock in time
+  update clock out to log clock out time 
+  
+  back end employee time log reading
+
+  if still have time after this, add live time reading
+
+  afterwards format sections html css
+  
+  
+    -->
+  <h2>Clock In Employes</h2>
+  <section id="clock-in-section">
+    <form id="clock-in-form" method="POST">
+      <label for="employee">Select Employee: </label>
+      <select name="employee">
+        <option value="">--Please choose an option--</option>
+        <?php
+        $query = 'SELECT * FROM employees WHERE clocked_in = FALSE ORDER BY last_name, first_name';
+        $result = mysqli_query( $connect, $query );
+      while ($record = mysqli_fetch_assoc($result)){
+        echo '<option value="' . $record["id"] . '">' . $record["first_name"] . ' '.$record["last_name"] . '</option>';
+      }
+        ?>
+      </select>
+      <button type="submit" name="clockin">Clock In</button>
+    </form>
+    </section>
+
+  <section id="clocked-in-employees">
+  <div class="employees-grid">
+  <?php
+
+ function listClockedinEmployees() {
+
+  global $connect;
+
+  $query = '
+    SELECT e.*, tl.timestamp AS clocked_in_at, 
+           TIMESTAMPDIFF(MINUTE, tl.timestamp, NOW()) AS minutes_clocked_in
+    FROM employees e
+    JOIN (
+      SELECT employee_id, MAX(timestamp) AS timestamp
+      FROM time_logs
+      WHERE action = "clock_in"
+      GROUP BY employee_id
+    ) tl ON e.id = tl.employee_id
+    WHERE e.clocked_in = TRUE
+    ORDER BY tl.timestamp DESC
+  ';
+
+  $result = mysqli_query($connect, $query);
+
+  while ($record = mysqli_fetch_assoc($result)) {
+    $minutes = (int)$record['minutes_clocked_in'];
+    $hours = floor($minutes / 60);
+    $remaining = $minutes % 60;
+    $duration = ($hours > 0 ? $hours . 'h ' : '') . $remaining . 'm';
+
+    echo '
+    <article class="employee-container-ci">
+      <div class="employee-card">
+        <h3>' . $record['first_name'] . ' ' . $record['last_name'] . '</h3>
+        <p>' . $record['position'] . '</p>
+        <p>clocked in at: ' . $record['clocked_in_at'] . ' (' . $duration . ' ago)</p>
+        <form method="POST">
+          <input type="hidden" name="id" value="' . $record['id'] . '"/>
+          <button type="submit" name="clockOut"> Clock Out </button>
+        </form>
+      </div>
+    </article>
+    ';
+  }
+}
+
+ listClockedinEmployees();
+
+
+  ?>
+</div>
+  <section>
+
+    <?php
+
+    if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['clockin'])){
+
+      // get id from form
+
+      $id = $_POST['employee'];
+
+      //check if user is clocked in (not really neccesary but just incase)
+
+      function checkEmployeeClockedIn($employeeid){
+
+         global $connect;
+
+        $query = 'SELECT clocked_in FROM employees WHERE id = "' . $employeeid . '"';
+        $result = mysqli_query($connect, $query);
+        
+        if ($record = mysqli_fetch_assoc($result)){
+          if($record['clocked_in']){
+            die('Employee already clocked in.');
+          }
+        }
+      }
+
+      checkEmployeeClockedIn($id);
+      
+
+      //set user of this id clocked in boolean to true
+
+      function clockInEmployee($employeeid){
+
+        global $connect;
+
+        $query = 'UPDATE employees SET clocked_in = TRUE WHERE id = "' . $employeeid . '"';
+        $result = mysqli_query($connect, $query);
+
+        if(!$result){
+          die("Error clocking in employee");
+        }
+
+        // log employee clock in
+
+         $logQuery = 'INSERT INTO time_logs (employee_id, action) VALUES ("' . $employeeid . '", "clock_in")';
+          mysqli_query($connect, $logQuery);
+
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit;
+    
+
+      }
+
+      clockInEmployee($id);
+
+    }
+
+    // clock out emplyee
+
+    if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['clockOut'])){
+
+      $id = $_POST['id'];
+
+      function clockOutEmployee($employeeid){
+
+        global $connect;
+
+        $query = 'UPDATE employees SET clocked_in = FALSE WHERE id ="' . $employeeid . '"';
+        $result = mysqli_query($connect, $query);
+
+        if(!$result){
+          die("Error clocking out employee.");
+        }
+
+        // log employee clock out
+
+        $logQuery = 'INSERT INTO time_logs (employee_id, action) VALUES ("' . $employeeid . '", "clock_out")';
+        mysqli_query($connect, $logQuery);
+
+         header("Location: " . $_SERVER['PHP_SELF']);
+        exit;
+
+      }
+
+      clockOutEmployee($id);
+    }
+
+    ?>
+
+
+<div class="admin-link">
     <p><a href="admin/">Admin Login</a> - For authorized personnel only</p>
     
   </div>
